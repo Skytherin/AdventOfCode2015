@@ -16,5 +16,8 @@ namespace AdventOfCode2015.Utils
                 }
             }
         }
+
+        public static string Join<T>(this IEnumerable<T> self, string separator) =>
+            string.Join(separator, self.Select(it => it?.ToString()));
     }
 }

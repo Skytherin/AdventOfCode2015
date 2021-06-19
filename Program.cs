@@ -1,6 +1,7 @@
 ﻿using System;
 using AdventOfCode2015.Days;
 using AdventOfCode2015.Days.Day2;
+using AdventOfCode2015.Days.Day3;
 
 namespace AdventOfCode2015
 {
@@ -8,7 +9,7 @@ namespace AdventOfCode2015
     {
         static void Main(string[] args)
         {
-            Day2.Run();
+            Day3.Run();
         }
     }
 }
