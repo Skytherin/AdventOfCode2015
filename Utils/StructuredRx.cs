@@ -19,14 +19,19 @@ namespace AdventOfCode2015.Utils
         {
             var propertyType = property.PropertyType;
             var groupName = $"{groupPrefix}{property.Name}";
-            if (propertyType == typeof(int) || propertyType == typeof(int?))
+            if (propertyType == typeof(int))
             {
-                actions[groupName] = (g) => property.SetValue(parent, Convert.ToInt32(g));
+                actions[groupName] = g => property.SetValue(parent, Convert.ToInt32(g));
+                return $"(?<{groupName}>\\d+)";
+            }
+            if (propertyType == typeof(int?))
+            {
+                actions[groupName] = g => property.SetValue(parent, string.IsNullOrWhiteSpace(g) ? null : Convert.ToInt32(g));
                 return $"(?<{groupName}>\\d+)";
             }
             if (propertyType == typeof(string))
             {
-                actions[groupName] = (g) => property.SetValue(parent, g);
+                actions[groupName] = g => property.SetValue(parent, g);
                 return $"(?<{groupName}>\\w+)";
             }
             if (propertyType.IsEnum)
@@ -57,24 +62,52 @@ namespace AdventOfCode2015.Utils
             var pattern = "";
             var ctor = propertyType.GetConstructor(new Type[] { })!;
             var instance = ctor.Invoke(new object?[] { });
+
+            var alternations = new List<string>();
+
             foreach (var subProperty in properties)
             {
                 var rxFormat = subProperty.GetCustomAttribute<RxFormat>() ?? new RxFormat();
-                if (rxFormat.Before is { } before)
+                var rxAlternate = subProperty.GetCustomAttribute<RxAlternate>();
+
+                if (rxAlternate == null && alternations.Any())
                 {
-                    pattern += before;
-                    pattern += @"\s*";
+                    pattern += $"({alternations.Select(a => $"({a})").Join("|")})";
+                    alternations.Clear();
                 }
 
-                pattern += GetRegexForType(subProperty, $"{prefix}__", actions, instance);
+                var altern = "";
 
-                pattern += @"\s*";
+                if (rxFormat.Before is { } before)
+                {
+                    altern += before;
+                    altern += @"\s*";
+                }
+
+                altern += GetRegexForType(subProperty, $"{prefix}__", actions, instance);
+
+                altern += @"\s*";
 
                 if (rxFormat.After is { } after)
                 {
-                    pattern += after;
-                    pattern += @"\s*";
+                    altern += after;
+                    altern += @"\s*";
                 }
+
+                if (rxAlternate != null)
+                {
+                    alternations.Add(altern);
+                }
+                else
+                {
+                    pattern += altern;
+                }
+            }
+
+            if (alternations.Any())
+            {
+                pattern += $"({alternations.Select(a => $"({a})").Join("|")})";
+                alternations.Clear();
             }
 
             return (pattern, instance);
