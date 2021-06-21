@@ -6,6 +6,7 @@ using AdventOfCode2015.Days.Day3;
 using AdventOfCode2015.Days.Day4;
 using AdventOfCode2015.Days.Day5;
 using AdventOfCode2015.Days.Day6;
+using AdventOfCode2015.Days.Day7;
 
 namespace AdventOfCode2015
 {
@@ -13,7 +14,7 @@ namespace AdventOfCode2015
     {
         static void Main(string[] args)
         {
-            var regression = false;
+            var regression = true;
             if (regression)
             {
                 Console.WriteLine("Day1");
@@ -26,9 +27,11 @@ namespace AdventOfCode2015
                 Day4.Run();
                 Console.WriteLine("Day5");
                 Day5.Run();
+                Console.WriteLine("Day6");
+                Day6.Run();
             }
-            Console.WriteLine("Day6");
-            Day6.Run();
+            //Console.WriteLine("Day7");
+            //Day7.Run();
         }
     }
 }

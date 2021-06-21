@@ -8,9 +8,13 @@
 
   <ItemGroup>
     <PackageReference Include="FluentAssertions" Version="5.10.3" />
+    <PackageReference Include="JetBrains.Annotations" Version="2021.1.0" />
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="Days\Day7\Day7Input.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Days\Day6\Day6Input.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

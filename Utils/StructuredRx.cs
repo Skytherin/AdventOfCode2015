@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using JetBrains.Annotations;
 
 namespace AdventOfCode2015.Utils
 {
@@ -11,65 +12,95 @@ namespace AdventOfCode2015.Utils
     {
         public static T Parse<T>(string input) where T : new()
         {
-            var properties = typeof(T).GetProperties().Where(p => p.SetMethod != null).ToList();
+            return (T)ParseOrDefaultInternal(typeof(T), input) ?? throw new ApplicationException();
+        }
 
-            var pattern = "";
-
-            var groupToSetAction = new Dictionary<string, Action<string>>();
-
-            var enumMap = new Dictionary<string, Dictionary<string, int>>();
-
-            var result = new T();
-
-            foreach (var property in properties)
+        private static string GetRegexForType(PropertyInfo property, string groupPrefix, Dictionary<string, Action<string>> actions, object parent)
+        {
+            var propertyType = property.PropertyType;
+            var groupName = $"{groupPrefix}{property.Name}";
+            if (propertyType == typeof(int))
             {
-                var name = property.Name;
-                var rxFormat = property.GetCustomAttribute<RxFormat>();
-                if (property.PropertyType == typeof(int))
-                {
-                    pattern += $"(?<{name}>\\d+)";
-                    groupToSetAction[property.Name] = g => property.SetValue(result, Convert.ToInt32(g));
-                }
-                else if (property.PropertyType.IsEnum)
-                {
-                    var mi = typeof(StructuredRx).GetMethod("GetEnumMap", BindingFlags.NonPublic | BindingFlags.Static);
-                    var fooRef = mi!.MakeGenericMethod(property.PropertyType);
-                    var map = (Dictionary<string, int>) fooRef.Invoke(null, null)!;
+                actions[groupName] = (g) => property.SetValue(parent, Convert.ToInt32(g));
+                return $"(?<{groupName}>\\d+)";
+            }
+            if (propertyType == typeof(string))
+            {
+                actions[groupName] = (g) => property.SetValue(parent, g);
+                return $"(?<{groupName}>\\w+)";
+            }
+            if (propertyType.IsEnum)
+            {
+                var mi = typeof(StructuredRx).GetMethod("GetEnumMap", BindingFlags.NonPublic | BindingFlags.Static);
+                var fooRef = mi!.MakeGenericMethod(propertyType);
+                var map = (Dictionary<string, int>)fooRef.Invoke(null, null)!;
 
-                    var alternation = map.Keys.Select(it => $"({it})").Join("|");
-                    pattern += $"(?<{name}>{alternation})";
+                var alternation = map.Keys.Select(it => $"({it})").Join("|");
 
-                    groupToSetAction[property.Name] = g => property.SetValue(result, map[g.ToLower()]);
-                }
-                else
+                actions[groupName] = (g) => property.SetValue(parent, map[g.ToLower()]);
+                return $"(?<{groupName}>{alternation})";
+            }
+            if (propertyType.IsClass)
+            {
+                var (pattern, instance) = GetRegexForClass(propertyType, groupName, actions);
+                property.SetValue(parent, instance);
+                return pattern;
+            }
+
+            throw new ApplicationException();
+        }
+
+        private static (string regex, object instance) GetRegexForClass(Type propertyType, string prefix,
+            Dictionary<string, Action<string>> actions)
+        {
+            var properties = propertyType.GetProperties().Where(p => p.SetMethod != null).ToList();
+            var pattern = "";
+            var ctor = propertyType.GetConstructor(new Type[] { })!;
+            var instance = ctor.Invoke(new object?[] { });
+            foreach (var subProperty in properties)
+            {
+                var rxFormat = subProperty.GetCustomAttribute<RxFormat>() ?? new RxFormat();
+                if (rxFormat.Before is { } before)
                 {
-                    throw new NotImplementedException();
+                    pattern += before;
+                    pattern += @"\s*";
                 }
+
+                pattern += GetRegexForType(subProperty, $"{prefix}__", actions, instance);
 
                 pattern += @"\s*";
 
-                if (rxFormat?.After is { } after)
+                if (rxFormat.After is { } after)
                 {
                     pattern += after;
                     pattern += @"\s*";
                 }
             }
 
+            return (pattern, instance);
+        }
+
+        private static object? ParseOrDefaultInternal(Type mainType, string input)
+        {
+            var groupToSetAction = new Dictionary<string, Action<string>>();
+            var (pattern, instance) = GetRegexForClass(mainType, mainType.Name, groupToSetAction);
+
             pattern = $"^({pattern})$";
 
             var match = Regex.Match(input, pattern, RegexOptions.IgnoreCase);
 
-            if (!match.Success) throw new ApplicationException();
+            if (!match.Success) return null;
 
-            foreach (var property in properties)
+            foreach (var property in groupToSetAction.Keys)
             {
-                var g = match.Groups[property.Name].Value;
-                groupToSetAction[property.Name](g);
+                var g = match.Groups[property].Value;
+                groupToSetAction[property](g);
             }
 
-            return result;
+            return instance;
         }
 
+        [UsedImplicitly]
         private static Dictionary<string, int> GetEnumMap<T>()
         {
             var enumValues = typeof(T).GetEnumValues();
