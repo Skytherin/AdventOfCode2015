@@ -19,7 +19,7 @@ namespace AdventOfCode2015.Utils
         {
             var propertyType = property.PropertyType;
             var groupName = $"{groupPrefix}{property.Name}";
-            if (propertyType == typeof(int))
+            if (propertyType == typeof(int) || propertyType == typeof(int?))
             {
                 actions[groupName] = (g) => property.SetValue(parent, Convert.ToInt32(g));
                 return $"(?<{groupName}>\\d+)";

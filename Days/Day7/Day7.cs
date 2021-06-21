@@ -19,7 +19,7 @@ namespace AdventOfCode2015.Days.Day7
 
         private static void Part1()
         {
-            Parse("a AND b");
+            var x = Parse("a AND b");
         }
         
 
@@ -70,6 +70,7 @@ namespace AdventOfCode2015.Days.Day7
 
         [RxAlternate]
         public string Input2 { get; set; } = default!;
+        
         [RxAlternate]
         public int? Value2 { get; set; } = default!;
     }

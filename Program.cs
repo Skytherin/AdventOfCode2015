@@ -14,7 +14,7 @@ namespace AdventOfCode2015
     {
         static void Main(string[] args)
         {
-            var regression = true;
+            var regression = false;
             if (regression)
             {
                 Console.WriteLine("Day1");
@@ -30,8 +30,8 @@ namespace AdventOfCode2015
                 Console.WriteLine("Day6");
                 Day6.Run();
             }
-            //Console.WriteLine("Day7");
-            //Day7.Run();
+            Console.WriteLine("Day7");
+            Day7.Run();
         }
     }
 }
