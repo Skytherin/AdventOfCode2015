@@ -1,5 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
+using System.Reflection;
 
 namespace AdventOfCode2015.Utils
 {
@@ -17,7 +20,14 @@ namespace AdventOfCode2015.Utils
             }
         }
 
-        public static string Join<T>(this IEnumerable<T> self, string separator) =>
+        public static string Join<T>(this IEnumerable<T> self, string separator = "") =>
             string.Join(separator, self.Select(it => it?.ToString()));
+
+        public static List<string> SplitIntoLines(this string input) =>
+            input.Split("\n")
+                .Where(it => !string.IsNullOrWhiteSpace(it))
+                .Select(it => it.Trim()).ToList();
+
+        
     }
 }
