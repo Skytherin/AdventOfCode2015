@@ -31,8 +31,8 @@ namespace AdventOfCode2015.Utils
             }
             if (propertyType == typeof(string))
             {
-                actions[groupName] = g => property.SetValue(parent, g);
-                return $"(?<{groupName}>\\w+)";
+                actions[groupName] = g => property.SetValue(parent, string.IsNullOrWhiteSpace(g) ? null : g);
+                return $"(?<{groupName}>[a-zA-Z]+)";
             }
             if (propertyType.IsEnum)
             {
@@ -42,13 +42,28 @@ namespace AdventOfCode2015.Utils
 
                 var alternation = map.Keys.Select(it => $"({it})").Join("|");
 
-                actions[groupName] = (g) => property.SetValue(parent, map[g.ToLower()]);
+                actions[groupName] = (g) => property.SetValue(parent, string.IsNullOrWhiteSpace(g) ? 0 : map[g.ToLower()]);
                 return $"(?<{groupName}>{alternation})";
             }
             if (propertyType.IsClass)
             {
                 var (pattern, instance) = GetRegexForClass(propertyType, groupName, actions);
-                property.SetValue(parent, instance);
+                foreach (var key in actions.Keys.Where(it => it.StartsWith(groupName)))
+                {
+                    var old = actions[key];
+                    actions[key] = g =>
+                    {
+                        // TODO: this fixes my problem right now, but also implies that you
+                        // can never instantiate a type with an empty match somewhere.
+                        if (!string.IsNullOrWhiteSpace(g))
+                        {
+                            property.SetValue(parent, instance);
+                        }
+                        
+                        old(g);
+                    };
+                }
+
                 return pattern;
             }
 

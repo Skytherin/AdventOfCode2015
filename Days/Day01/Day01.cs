@@ -3,11 +3,11 @@ using System.IO;
 using System.Linq;
 using FluentAssertions;
 
-namespace AdventOfCode2015.Days.Day1
+namespace AdventOfCode2015.Days.Day01
 {
-    public static class Day1
+    public static class Day01
     {
-        private static string Input = File.ReadAllText("Days/Day1/Day1Input.txt");
+        private static string Input = File.ReadAllText("Days/Day01/Day1Input.txt");
 
         public static void Run()
         {

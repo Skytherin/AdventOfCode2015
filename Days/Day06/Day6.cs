@@ -6,11 +6,11 @@ using System.Linq;
 using AdventOfCode2015.Utils;
 using FluentAssertions;
 
-namespace AdventOfCode2015.Days.Day6
+namespace AdventOfCode2015.Days.Day06
 {
     public static class Day6
     {
-        private static Day6Input[] Input => File.ReadAllText("Days/Day6/Day6Input.txt").SplitIntoLines()
+        private static Day6Input[] Input => File.ReadAllText("Days/Day06/Day6Input.txt").SplitIntoLines()
             .Select(line => Parse(line)).ToArray();
 
         public static void Run()

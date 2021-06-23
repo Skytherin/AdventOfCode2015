@@ -3,13 +3,12 @@ using System.IO;
 using System.Linq;
 using AdventOfCode2015.Utils;
 using FluentAssertions;
-using FluentAssertions.Common;
 
-namespace AdventOfCode2015.Days.Day2
+namespace AdventOfCode2015.Days.Day02
 {
     public static class Day2
     {
-        private static List<Day2Input> Input => File.ReadAllText("Days/Day2/Day2Input.txt")
+        private static List<Day2Input> Input => File.ReadAllText("Days/Day02/Day2Input.txt")
             .Split("\n").Select(it => Parse(it.Trim())).ToList();
 
         public static void Run()

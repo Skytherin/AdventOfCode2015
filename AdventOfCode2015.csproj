@@ -9,28 +9,44 @@
   <ItemGroup>
     <PackageReference Include="FluentAssertions" Version="5.10.3" />
     <PackageReference Include="JetBrains.Annotations" Version="2021.1.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="Days\Day7\Day7Input.txt">
+    <None Update="Days\Day12\Day12Input.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Days\Day6\Day6Input.txt">
+    <None Update="Days\Day11\Day11Input.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Days\Day5\Day5Input.txt">
+    <None Update="Days\Day10\Day10Input.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Days\Day4\Day4Input.txt">
+    <None Update="Days\Day09\Day9Input.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Days\Day3\Day3Input.txt">
+    <None Update="Days\Day08\Day8Input.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Days\Day2\Day2Input.txt">
+    <None Update="Days\Day07\Day7Input.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Days\Day1\Day1Input.txt">
+    <None Update="Days\Day06\Day6Input.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Days\Day05\Day5Input.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Days\Day04\Day4Input.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Days\Day03\Day3Input.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Days\Day02\Day2Input.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Days\Day01\Day1Input.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
+using System.Collections.Specialized;
 using System.Linq;
-using System.Reflection;
 
 namespace AdventOfCode2015.Utils
 {
@@ -28,6 +27,75 @@ namespace AdventOfCode2015.Utils
                 .Where(it => !string.IsNullOrWhiteSpace(it))
                 .Select(it => it.Trim()).ToList();
 
-        
+        public static IEnumerable<List<T>> Permute<T>(this IEnumerable<T> input)
+        {
+            var original = input.ToList();
+            if (original.Count == 0)
+            {
+                yield return new List<T>();
+                yield break;
+            }
+            foreach (var index in Enumerable.Range(0, original.Count))
+            {
+                var modified = original.ToList();
+                var first = original[index];
+                modified.RemoveAt(index);
+                foreach (var permutation in Permute(modified))
+                {
+                    permutation.Insert(0, first);
+                    yield return permutation;
+                }
+            }
+        }
+
+        public static IEnumerable<List<T>> Runs<T>(this IEnumerable<T> input)
+        {
+            var original = input.ToList();
+            if (original.Count == 0)
+            {
+                yield return new List<T>();
+                yield break;
+            }
+
+            var runKey = original[0];
+            var count = 1;
+            foreach (var current in original.Skip(1))
+            {
+                if (current.Equals(runKey))
+                {
+                    count += 1;
+                }
+                else
+                {
+                    yield return Enumerable.Repeat(runKey, count).ToList();
+                    runKey = current;
+                    count = 1;
+                }
+            }
+            yield return Enumerable.Repeat(runKey, count).ToList();
+        }
+
+        public static IEnumerable<List<T>> Increments<T>(this IEnumerable<T> input,
+            T firstElement, T lastElement, Func<T, T> incrementFunc)
+        {
+            var original = input.ToList();
+            while (true)
+            {
+                var i = original.Count - 1;
+                while (i >= 0)
+                {
+                    if (original[i].Equals(lastElement))
+                    {
+                        original[i] = firstElement;
+                        i -= 1;
+                        continue;
+                    }
+
+                    original[i] = incrementFunc(original[i]);
+                    yield return original.ToList();
+                    break;
+                }
+            }
+        }
     }
 }

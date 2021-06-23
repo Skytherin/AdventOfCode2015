@@ -2,7 +2,7 @@
 using System.Security.Cryptography;
 using FluentAssertions;
 
-namespace AdventOfCode2015.Days.Day4
+namespace AdventOfCode2015.Days.Day04
 {
     public static class Day4
     {

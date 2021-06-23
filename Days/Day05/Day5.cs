@@ -1,15 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using AdventOfCode2015.Utils;
 using FluentAssertions;
 
-namespace AdventOfCode2015.Days.Day5
+namespace AdventOfCode2015.Days.Day05
 {
     public static class Day5
     {
-        private static List<string> Input => File.ReadAllText("Days/Day5/Day5Input.txt").SplitIntoLines();
+        private static List<string> Input => File.ReadAllText("Days/Day05/Day5Input.txt").SplitIntoLines();
 
         public static void Run()
         {

@@ -4,11 +4,11 @@ using System.Linq;
 using AdventOfCode2015.Utils;
 using FluentAssertions;
 
-namespace AdventOfCode2015.Days.Day3
+namespace AdventOfCode2015.Days.Day03
 {
     public static class Day3
     {
-        private static string Input => File.ReadAllText("Days/Day3/Day3Input.txt").Trim();
+        private static string Input => File.ReadAllText("Days/Day03/Day3Input.txt").Trim();
 
         public static void Run()
         {
