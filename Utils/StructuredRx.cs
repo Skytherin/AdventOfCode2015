@@ -22,12 +22,12 @@ namespace AdventOfCode2015.Utils
             if (propertyType == typeof(int))
             {
                 actions[groupName] = g => property.SetValue(parent, Convert.ToInt32(g));
-                return $"(?<{groupName}>\\d+)";
+                return $"(?<{groupName}>-?\\d+)";
             }
             if (propertyType == typeof(int?))
             {
                 actions[groupName] = g => property.SetValue(parent, string.IsNullOrWhiteSpace(g) ? null : Convert.ToInt32(g));
-                return $"(?<{groupName}>\\d+)";
+                return $"(?<{groupName}>-?\\d+)";
             }
             if (propertyType == typeof(string))
             {
@@ -137,7 +137,10 @@ namespace AdventOfCode2015.Utils
 
             var match = Regex.Match(input, pattern, RegexOptions.IgnoreCase);
 
-            if (!match.Success) return null;
+            if (!match.Success)
+            {
+                return null;
+            }
 
             foreach (var property in groupToSetAction.Keys)
             {

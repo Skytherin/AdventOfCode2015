@@ -13,6 +13,8 @@ using AdventOfCode2015.Days.Day10;
 using AdventOfCode2015.Days.Day11;
 using AdventOfCode2015.Days.Day12;
 using AdventOfCode2015.Days.Day13;
+using AdventOfCode2015.Days.Day14;
+using AdventOfCode2015.Days.Day15;
 
 namespace AdventOfCode2015
 {
@@ -47,9 +49,13 @@ namespace AdventOfCode2015
                 Day11.Run();
                 Console.WriteLine("Day12");
                 Day12.Run();
+                Console.WriteLine("Day13");
+                Day13.Run();
+                Console.WriteLine("Day14");
+                Day14.Run();
             }
-            Console.WriteLine("Day13");
-            Day13.Run();
+            Console.WriteLine("Day15");
+            Day15.Run();
         }
     }
 }

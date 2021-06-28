@@ -37,7 +37,7 @@ namespace AdventOfCode2015.Days.Day12
         private static void Part2()
         {
             Do2("[1,{\"c\":\"red\",\"b\":2},3]").Should().Be(4);
-            Do2(Input).Should().Be(0);
+            Do2(Input).Should().Be(96852);
         }
         
 
