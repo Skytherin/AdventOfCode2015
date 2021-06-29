@@ -5,7 +5,7 @@ using FluentAssertions;
 
 namespace AdventOfCode2015.Days.Day01
 {
-    public static class Day01
+    public static class Day1
     {
         private static string Input = File.ReadAllText("Days/Day01/Day1Input.txt");
 

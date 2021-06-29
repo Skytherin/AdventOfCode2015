@@ -10,9 +10,14 @@ namespace AdventOfCode2015.Utils
 {
     public static class StructuredRx
     {
-        public static T Parse<T>(string input) where T : new()
+        public static T Parse<T>(string input)
         {
-            return (T)ParseOrDefaultInternal(typeof(T), input) ?? throw new ApplicationException();
+            return (T?) ParseOrDefaultInternal(typeof(T), input) ?? throw new ApplicationException();
+        }
+
+        public static T? ParseOrDefault<T>(string input)
+        {
+            return (T?) ParseOrDefaultInternal(typeof(T), input);
         }
 
         private static string GetRegexForType(PropertyInfo property, string groupPrefix, Dictionary<string, Action<string>> actions, object parent)
@@ -34,6 +39,28 @@ namespace AdventOfCode2015.Utils
                 actions[groupName] = g => property.SetValue(parent, string.IsNullOrWhiteSpace(g) ? null : g);
                 return $"(?<{groupName}>[a-zA-Z]+)";
             }
+
+            if (propertyType == typeof(Dictionary<string, int>))
+            {
+                var keyrx = @"([a-zA-Z]+)";
+                var valuerx = @"(-?\d+)";
+                actions[groupName] = g =>
+                {
+                    var result = new Dictionary<string, int>();
+                    var group = $@"(?<key>{keyrx}):\s*(?<value>{valuerx})\s*";
+                    var match = Regex.Match(g, $@"^{group}");
+                    while (match.Success)
+                    {
+                        result.Add(match.Groups["key"].Value, Convert.ToInt32(match.Groups["value"].Value));
+                        g = g.Substring(match.Length);
+                        match = Regex.Match(g, $@"^,\s*{group}");
+                    }
+                    property.SetValue(parent, result);
+                };
+                var group = $@"{keyrx}:\s*{valuerx}\s*";
+                return $@"(?<{groupName}>({group})(,\s*{group})*)";
+            }
+
             if (propertyType.IsEnum)
             {
                 var mi = typeof(StructuredRx).GetMethod("GetEnumMap", BindingFlags.NonPublic | BindingFlags.Static);
