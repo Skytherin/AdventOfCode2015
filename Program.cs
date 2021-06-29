@@ -7,7 +7,7 @@ namespace AdventOfCode2015
 {
     class Program
     {
-        static void Main(string[] args)
+        static void Main()
         {
             var regression = false;
 
@@ -25,9 +25,12 @@ namespace AdventOfCode2015
 
             foreach (var day in days)
             {
-                Console.WriteLine(day.type.Name);
+                var start = DateTime.Now;
+                Console.Write(day.type.Name);
                 var run = day.type.GetMethod("Run", BindingFlags.Static | BindingFlags.Public) ?? throw new ApplicationException();
                 run.Invoke(null, new object?[]{});
+                var stop = DateTime.Now;
+                Console.WriteLine($"  {(stop - start).TotalSeconds:N3}s");
             }
         }
     }

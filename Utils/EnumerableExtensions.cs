@@ -48,6 +48,26 @@ namespace AdventOfCode2015.Utils
             }
         }
 
+        public static IEnumerable<List<T>> Subsets<T>(this IEnumerable<T> input)
+        {
+            var original = input.ToList();
+            if (original.Count == 0)
+            {
+                yield return new List<T>();
+                yield break;
+            }
+
+            var mask = Enumerable.Repeat(0, original.Count);
+
+            foreach (var increment in mask.Increments(0, 1, it => it + 1))
+            {
+                yield return increment.Zip(original)
+                    .Where(it => it.First == 1)
+                    .Select(it => it.Second)
+                    .ToList();
+            }
+        }
+
         public static IEnumerable<List<T>> Runs<T>(this IEnumerable<T> input)
         {
             var original = input.ToList();
@@ -88,6 +108,7 @@ namespace AdventOfCode2015.Utils
                     {
                         original[i] = firstElement;
                         i -= 1;
+                        if (i < 0) yield break;
                         continue;
                     }
 
@@ -97,5 +118,8 @@ namespace AdventOfCode2015.Utils
                 }
             }
         }
+
+        public static IEnumerable<(T, int)> WithIndices<T>(this IEnumerable<T> self) =>
+            self.Select((it, index) => (it, index));
     }
 }
