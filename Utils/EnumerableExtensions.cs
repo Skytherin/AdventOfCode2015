@@ -24,7 +24,6 @@ namespace AdventOfCode2015.Utils
 
         public static List<string> SplitIntoLines(this string input) =>
             input.Split("\n")
-                .Where(it => !string.IsNullOrWhiteSpace(it))
                 .Select(it => it.Trim()).ToList();
 
         public static IEnumerable<List<T>> Permute<T>(this IEnumerable<T> input)
@@ -121,5 +120,16 @@ namespace AdventOfCode2015.Utils
 
         public static IEnumerable<(T, int)> WithIndices<T>(this IEnumerable<T> self) =>
             self.Select((it, index) => (it, index));
+
+        public static T Pop<T>(this List<T> self)
+        {
+            if (self.Any())
+            {
+                var result = self.Last();
+                self.RemoveAt(self.Count - 1);
+                return result;
+            }
+            throw new ApplicationException("Attempt to shift empty list.");
+        }
     }
 }
