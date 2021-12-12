@@ -48,8 +48,6 @@ e => O
 H => HO
 H => OH
 O => HH".SplitIntoLines().Select(Parse).ToArray()).Should().Be(6);
-            Console.WriteLine();
-            Console.WriteLine(1);
             Do2(Molecule, Input).Should().Be(212);
         }
         

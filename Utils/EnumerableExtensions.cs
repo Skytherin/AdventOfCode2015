@@ -47,26 +47,6 @@ namespace AdventOfCode2015.Utils
             }
         }
 
-        public static IEnumerable<List<T>> Subsets<T>(this IEnumerable<T> input)
-        {
-            var original = input.ToList();
-            if (original.Count == 0)
-            {
-                yield return new List<T>();
-                yield break;
-            }
-
-            var mask = Enumerable.Repeat(0, original.Count);
-
-            foreach (var increment in mask.Increments(0, 1, it => it + 1))
-            {
-                yield return increment.Zip(original)
-                    .Where(it => it.First == 1)
-                    .Select(it => it.Second)
-                    .ToList();
-            }
-        }
-
         public static IEnumerable<List<T>> Runs<T>(this IEnumerable<T> input)
         {
             var original = input.ToList();
@@ -97,13 +77,38 @@ namespace AdventOfCode2015.Utils
         public static IEnumerable<List<T>> Increments<T>(this IEnumerable<T> input,
             T firstElement, T lastElement, Func<T, T> incrementFunc)
         {
+            var original = input.ToArray();
+            while (true)
+            {
+                var i = 0;
+                while (i < original.Length)
+                {
+                    if (original[i].Equals(lastElement))
+                    {
+                        original[i] = firstElement;
+                        i += 1;
+                        if (i >= original.Length) yield break;
+                        continue;
+                    }
+
+                    original[i] = incrementFunc(original[i]);
+                    yield return original.ToList();
+                    break;
+                }
+            }
+        }
+
+        public static IEnumerable<List<T>> Increments<T>(this IEnumerable<T> input,
+            T firstElement, Func<int, T> lastElement, Func<T, T> incrementFunc)
+        {
             var original = input.ToList();
+            yield return original;
             while (true)
             {
                 var i = original.Count - 1;
                 while (i >= 0)
                 {
-                    if (original[i].Equals(lastElement))
+                    if (original[i].Equals(lastElement(i)))
                     {
                         original[i] = firstElement;
                         i -= 1;
@@ -118,7 +123,7 @@ namespace AdventOfCode2015.Utils
             }
         }
 
-        public static IEnumerable<(T, int)> WithIndices<T>(this IEnumerable<T> self) =>
+        public static IEnumerable<(T Value, int Index)> WithIndices<T>(this IEnumerable<T> self) =>
             self.Select((it, index) => (it, index));
 
         public static T Pop<T>(this List<T> self)
@@ -130,6 +135,81 @@ namespace AdventOfCode2015.Utils
                 return result;
             }
             throw new ApplicationException("Attempt to shift empty list.");
+        }
+
+        public static IEnumerable<(T Value, int Length)> RunLengthEncode<T>(this IEnumerable<T> self)
+        {
+            var temp = new List<T>();
+            var length = 0;
+            foreach (var t in self)
+            {
+                if (!temp.Any())
+                {
+                    temp.Add(t);
+                    length = 1;
+                }
+                else if (temp[0]!.Equals(t))
+                {
+                    length += 1;
+                }
+                else
+                {
+                    yield return (temp[0], length);
+                    temp.Clear();
+                    temp.Add(t);
+                    length = 1;
+                }
+            }
+            if (length > 0) yield return (temp[0], length);
+        }
+
+        public static TSource MinBy<TSource, TKey>(
+            this IEnumerable<TSource> source,
+            Func<TSource, TKey> keySelector) where TSource : notnull
+        {
+            var comparer = Comparer<TKey>.Default;
+            return source.ArgBy(keySelector, lag => comparer.Compare(lag.Current, lag.Previous) < 0);
+        }
+
+        public static TSource ArgBy<TSource, TKey>(
+            this IEnumerable<TSource> source,
+            Func<TSource, TKey> keySelector,
+            Func<(TKey Current, TKey Previous), bool> predicate) where TSource : notnull
+        {
+            if (source == null) throw new ArgumentNullException(nameof(source));
+            if (keySelector == null) throw new ArgumentNullException(nameof(keySelector));
+            if (predicate == null) throw new ArgumentNullException(nameof(predicate));
+            if (!source.Any()) new InvalidOperationException("Sequence contains no elements");
+
+            var value = source.First();
+            var key = keySelector(value);
+
+            bool hasValue = false;
+            foreach (var other in source)
+            {
+                var otherKey = keySelector(other);
+                if (otherKey == null) continue;
+
+                if (hasValue)
+                {
+                    if (predicate((otherKey, key)))
+                    {
+                        value = other;
+                        key = otherKey;
+                    }
+                }
+                else
+                {
+                    value = other;
+                    key = otherKey;
+                    hasValue = true;
+                }
+            }
+            if (hasValue)
+            {
+                return value;
+            }
+            throw new InvalidOperationException("Sequence contains no elements");
         }
     }
 }

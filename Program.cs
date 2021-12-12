@@ -10,13 +10,21 @@ namespace AdventOfCode2015
         static void Main()
         {
             var regression = false;
+            var dayOverride = 20;
 
             var days = Assembly.GetExecutingAssembly()
                 .GetTypes()
                 .Select(type => (type, StructuredRx.ParseOrDefault<DayClass>(type.Name)))
                 .Where(it => it.Item2 != null)
-                .OrderBy(it => it.Item2!.DayNumber)
+                .Select(it => new {Type = it.Item1, it.Item2!.DayNumber})
+                .OrderBy(it => it.DayNumber)
                 .ToList();
+
+            // ReSharper disable once ConditionIsAlwaysTrueOrFalse
+            if (dayOverride != 0)
+            {
+                days = days.Where(it => it.DayNumber == dayOverride).ToList();
+            }
 
             if (!regression)
             {
@@ -26,8 +34,8 @@ namespace AdventOfCode2015
             foreach (var day in days)
             {
                 var start = DateTime.Now;
-                Console.Write(day.type.Name);
-                var run = day.type.GetMethod("Run", BindingFlags.Static | BindingFlags.Public) ?? throw new ApplicationException();
+                Console.Write(day.Type.Name);
+                var run = day.Type.GetMethod("Run", BindingFlags.Static | BindingFlags.Public) ?? throw new ApplicationException();
                 run.Invoke(null, new object?[]{});
                 var stop = DateTime.Now;
                 Console.WriteLine($"  {(stop - start).TotalSeconds:N3}s");
