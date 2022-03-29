@@ -15,54 +15,67 @@ namespace AdventOfCode2015.Days.Day20
         public static void Run()
         {
             Console.WriteLine("\n***");
-            //Part1();
+            Part1();
             Console.WriteLine("***");
-            Part2();
+            //Part2();
         }
 
         private static void Part1()
         {
-            Naive(1).Should().Be(10);
-            Naive(2).Should().Be(30);
-            Naive(3).Should().Be(40);
-            Naive(4).Should().Be(70);
-            Naive(5).Should().Be(60);
-            Naive(6).Should().Be(120);
-            Naive(7).Should().Be(80);
-            Naive(8).Should().Be(150);
-            Naive(9).Should().Be(130);
+            //Naive(1).Should().Be(10);
+            //Naive(2).Should().Be(30);
+            //Naive(3).Should().Be(40);
+            //Naive(4).Should().Be(70);
+            //Naive(5).Should().Be(60);
+            //Naive(6).Should().Be(120);
+            //Naive(7).Should().Be(80);
+            //Naive(8).Should().Be(150);
+            //Naive(9).Should().Be(130);
 
-            foreach (var i in Enumerable.Range(1, 1000))
-            {
-                Advanced(i).Should().Be(Naive(i));
-            }
+            //foreach (var i in Enumerable.Range(1, 1000))
+            //{
+            //    Advanced(i).Should().Be(Naive(i));
+            //}
 
-            var dt = DateTime.Now;
-            foreach (var i in Enumerable.Range(1, 20000))
-            {
-                Naive(i);
-            }
-            Console.WriteLine();
-            Console.WriteLine((DateTime.Now - dt).TotalSeconds);
-            dt = DateTime.Now;
-            foreach (var i in Enumerable.Range(1, 20000))
-            {
-                Advanced(i);
-            }
-            Console.WriteLine((DateTime.Now - dt).TotalSeconds);
+            //var dt = DateTime.Now;
+            //foreach (var i in Enumerable.Range(1, 20000))
+            //{
+            //    Naive(i);
+            //}
+            //Console.WriteLine();
+            //Console.WriteLine((DateTime.Now - dt).TotalSeconds);
+            //dt = DateTime.Now;
+            //foreach (var i in Enumerable.Range(1, 20000))
+            //{
+            //    Advanced(i);
+            //}
+            //Console.WriteLine((DateTime.Now - dt).TotalSeconds);
 
-            var houseNumber = 1;
+            //var houseNumber = 1;
             var targetNumber = 33_100_000;
 
-            while (houseNumber < 2_000_000)
+            //while (houseNumber < 2_000_000)
+            //{
+            //    if (houseNumber % 1000 == 0) Console.WriteLine(houseNumber);
+            //    if (Advanced(houseNumber) >= targetNumber)
+            //    {
+            //        break;
+            //    }
+            //    houseNumber += 1;
+            //}
+
+            var tn2 = targetNumber / 10;
+            var array = new int[tn2+1];
+
+            for(var i = 1; i <= tn2; i++)
             {
-                if (houseNumber % 1000 == 0) Console.WriteLine(houseNumber);
-                if (Advanced(houseNumber) >= targetNumber)
+                for(var j = i; j <= tn2; j += i)
                 {
-                    break;
+                    array[j] += i * 10;
                 }
-                houseNumber += 1;
             }
+
+            var houseNumber = array.WithIndices().Where(it => it.Value >= targetNumber).Select(it => it.Index).First();
 
             houseNumber.Should().Be(776_160);
         }
@@ -104,20 +117,38 @@ namespace AdventOfCode2015.Days.Day20
 
         private static void Part2()
         {
-            var targetNumber = 33_100_000;
-            var max = 0L;
+            //var targetNumber = 33_100_000;
+            //var max = 0L;
 
-            for (var houseNumber = 1; houseNumber < 3_009_090; houseNumber++)
+            //for (var houseNumber = 1; houseNumber < 3_009_090; houseNumber++)
+            //{
+            //    var x = Advanced2(houseNumber);
+            //    max = Math.Max(x, max);
+            //    if (houseNumber % 1000 == 0) Console.WriteLine($"{houseNumber} {x} {max}");
+            //    if (x >= targetNumber)
+            //    {
+            //        houseNumber.Should().Be(786240);
+            //        break;
+            //    }
+            //}
+
+            var targetNumber = 33_100_000;
+
+            var tn2 = targetNumber / 11;
+            var array = new int[tn2 + 1];
+
+            for (var i = 1; i <= tn2; i++)
             {
-                var x = Advanced2(houseNumber);
-                max = Math.Max(x, max);
-                if (houseNumber % 1000 == 0) Console.WriteLine($"{houseNumber} {x} {max}");
-                if (x >= targetNumber)
+                var n = 0;
+                for (var j = i; j <= tn2 && n++ < 50; j += i)
                 {
-                    houseNumber.Should().Be(786240);
-                    break;
+                    array[j] += i * 11;
                 }
             }
+
+            var houseNumber = array.WithIndices().Where(it => it.Value >= targetNumber).Select(it => it.Index).First();
+
+            houseNumber.Should().Be(786_240);
         }
     }
 }
